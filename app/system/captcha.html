@@ -79,8 +79,7 @@
         		$.ajax({
         			type:"POST",
         			url:"//sf-api.suxber.live/System/Captcha",
-        			data:{"data":{"type":"cloudflare","token":getvalue('token'),"sign":getvalue('sign'),"code":res}},
-					contentType:"application/json;charset=UTF-8",
+        			data:JSON.stringify({"data":{"type":"cloudflare","token":getvalue('token'),"sign":getvalue('sign'),"code":res}}),
         			success:function (data) {
 						loading.close();
         				if(data.code==200){
