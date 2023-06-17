@@ -55,8 +55,7 @@
 		    <button class="col-12 mt-4 btn btn-primary rounded-pill">返回</button>
 		</div>
 
-	    <script type="text/javascript" src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/crypto-js/4.1.1/crypto-js.min.js"></script>
-		<script type="text/javascript" src="https://sf.suxber.live/app/webapp.js"></script>
+		<script type="text/javascript" src="/uni.webview.js"></script>
 	    <script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/jquery/3.6.0/jquery.min.js"></script>
 	    <script src="https://cdn.bootcdn.net/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js"></script>
 	    <script>
@@ -119,12 +118,6 @@
 			    }
 			    return (false)
 			}
-			function aes_encrypt(word){
-                var key  = CryptoJS.enc.Utf8.parse('p7petkb252bnvlg2');
-                var srcs = CryptoJS.enc.Utf8.parse(word);
-                var encrypted = CryptoJS.AES.encrypt(srcs, key, {mode:CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7});
-                return encrypted.toString();
-            }
 	    </script>
 	</body>
 </html>
