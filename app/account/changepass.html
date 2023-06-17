@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+		<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.2/css/bootstrap.min.css"/>
+		<link href="https://cdn.bootcdn.net/ajax/libs/bootstrap-icons/1.10.2/font/bootstrap-icons.css" rel="stylesheet">
+		<link href="https://cdn.bootcdn.net/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.css" rel="stylesheet">
+		<title>修改密码</title>
+		<style>body{background:#f5f6f7}input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none}@keyframes fadeInRight{0%{opacity:0;transform:translateX(20px)}100%{opacity:1;transform:translateX(0)}}.container{animation-name:fadeInRight;animation-duration:.8s;animation-fill-mode:both}</style>
+	</head>
+	<body>
+	    <div class="container p-3">
+	        <div class="progress" style="height: 1ch;">
+                <div class="progress-bar" style="width: 33%;"></div>
+            </div>
+        </div>
+	    <div class="container p-3" id="step1">
+		    <h2><b>修改密码</b></h2>
+		    <p class="text-secondary">Change Password</p>
+		    <div class="card border border-0 shadow-sm rounded">
+		        <div class="card-body">
+		            <p>&emsp;&emsp;如果您需要修改您账号的密码，请按照本流程进行操作。<br>&emsp;&emsp;请注意，您的账号不能正处于以下情况：</p>
+		            <p>&emsp;&emsp;1.账号处于临时冻结/永久封禁状态；<br>&emsp;&emsp;2.账号未绑定安全手机<br>&emsp;&emsp;3.执法/司法机关要求账号信息封存<br>&emsp;&emsp;4.违反《用户协议》的约定</p>
+		            <p>&emsp;&emsp;当您准备好之后，请点击下一步按钮开始流程</p>
+		        </div>
+		    </div>
+		    <button class="col-12 mt-4 btn btn-primary rounded-pill">下一步</button>
+		</div>
+
+        <div class="container p-3" id="step2">
+		    <h2><b>修改密码</b></h2>
+		    <p class="text-secondary">Change Password</p>
+		    <div class="card border border-0 shadow-sm rounded">
+		        <div class="card-body">
+		            <p class="text-center">请输入账户旧密码</p>
+		            <input class="form-control" type="password" id="oldpass" placeholder="旧密码"/>
+		            <p class="text-center">请输入账户新密码</p>
+		            <input class="form-control" type="password" id="newpass" placeholder="新密码"/>
+		            <input class="form-control mt-2" type="password" id="newpass2" placeholder="重复一次新密码"/>
+		        </div>
+		    </div>
+		    <button class="col-12 mt-4 btn btn-primary rounded-pill">下一步</button>
+		</div>
+
+        <div class="container p-3" id="step3">
+            <div class="text-center" style="margin-top:20vh">
+                <h2><b>修改成功</b></h2>
+		        <p class="text-secondary">请使用您的新密码登录账户</p>
+		        <button class="col-12 mt-4 btn btn-primary rounded-pill">重新登录</button>
+            </div>
+		</div>
+
+		<script type="text/javascript" src="/uni.webview.js"></script>
+	    <script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/jquery/3.6.0/jquery.min.js"></script>
+	    <script src="https://cdn.bootcdn.net/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js"></script>
+	    <script>
+	    let user;
+		let code;
+		    window.sftools.init(()=>{
+                window.sftools.run({type:'getUserToken'},e=>{user=e.user;token=e.token;},e=>{plus.nativeUI.alert("获取账户信息失败，"+e,_=>{uni.navigateBack()})});
+	        });
+	        $(function(){
+	            $('#step2').hide();
+    	        $('#step3').hide();
+	        });
+            $('#step1 button').click(_=>{
+                $('#step1').hide();
+                $('#step2').show();
+                $('.progress-bar').css('width','66%');
+            });
+            $('#step2 button').click(_=>{
+    	        let oldpass=$('#oldpass').val();
+    	        if(oldpass.length<6){
+    	            $.alert({title:'错误',type:'red',content:'旧密码格式有误'}); 
+    	            return;
+    	        }
+    	        let pass=$('#newpass').val();
+    	        if(pass.length<6){
+    	            $.alert({title:'错误',type:'red',content:'密码必须大于6位，并且只能包含数字/字母/特殊符号'}); 
+    	            return;
+    	        }
+    	        if(pass!==$('#newpass2').val()){
+    	            $.alert({title:'错误',type:'red',content:'两次输入的密码不一致'}); 
+    	            return;
+    	        }
+    	        let loading=$.alert({title:'',content:'操作正在进行，请稍后',buttons:[],closeIcon:false});
+        		$.ajax({
+        			type:"POST",
+        			url:"https://sf-api.suxber.live/Account/ChangePass",
+        			data:JSON.stringify({"data":{"pass":oldpass,"newpass":pass},"account":{"user":user,"token":token}}),
+					contentType:"application/json;charset=UTF-8",
+        			success:function (data) {
+        				loading.close();
+        			    if(data.code==200){
+        					$('#step2').hide();
+                            $('#step3').show();
+                            $('.progress-bar').css('width','100%');
+        				}else{
+        					$.alert({title:'错误',type:'red',content:data.msg}); 
+        				}
+        			},
+        			error:function (msg) {
+        			    loading.close();
+        				$.alert({title:'错误',type:'red',content:'网络异常，请稍后再试'}); 
+        			}
+        		});
+            });
+            $('#step3 button').click(_=>{
+                uni.navigateBack();
+            });
+			function aes_encrypt(word){
+                var key  = CryptoJS.enc.Utf8.parse('p7petkb252bnvlg2');
+                var srcs = CryptoJS.enc.Utf8.parse(word);
+                var encrypted = CryptoJS.AES.encrypt(srcs, key, {mode:CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7});
+                return encrypted.toString();
+            }
+	    </script>
+	</body>
+</html>
