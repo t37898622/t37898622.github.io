@@ -80,7 +80,7 @@
         			type:"POST",
         			url:"//sf-api.suxber.live/System/Captcha",
         			data:{"data":{"type":"cloudflare","token":getvalue('token'),"sign":getvalue('sign'),"code":res}},
-					dataType:'json',
+					contentType:"application/json;charset=UTF-8",
         			success:function (data) {
 						loading.close();
         				if(data.code==200){
